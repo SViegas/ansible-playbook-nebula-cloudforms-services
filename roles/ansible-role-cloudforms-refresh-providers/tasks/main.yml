@@ -1,0 +1,6 @@
+---
+# tasks file for ansible-role-cloudforms-refresh-providers
+
+- include: get_providers.yml
+- include: refresh_providers.yml provider={{ item }}
+  with_items: "{{ providers }}"

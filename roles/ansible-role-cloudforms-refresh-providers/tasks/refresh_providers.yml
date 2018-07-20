@@ -1,0 +1,45 @@
+---
+# tasks file for ansible-role-cloudforms-vmware-provision
+
+- name: "Refreshing VMWare Providers in CloudForms"
+  uri:
+    url: "{{ provider }}"
+    method: POST
+    body:
+      action: refresh
+    body_format: json
+    validate_certs: False
+    headers:
+      X-Auth-Token: "{{ rhcf_auth_token }}"
+      Content-Type: "application/json"
+    status_code: 200
+  register: provider_refresh
+
+- name: "Task Result: Refreshing VMWare Provider in CloudForms"
+  debug: var=provider_refresh
+
+- name: "Setting task refresh URL"
+  set_fact:
+    task_url: "{{ provider_refresh.json.task_href }}"
+
+- name: "Fact Result: Task Refresh URL"
+  debug: var=task_url
+    
+- name: "Waiting for CloudForms to refresh VMWare Provider"
+  uri:
+    url: "{{ task_url }}"
+    method: GET
+    validate_certs: False
+    headers:
+      X-Auth-Token: "{{ rhcf_auth_token }}"
+      Content-Type: "application/json"
+    status_code: 200
+  register: task_result
+  until: task_result.json.state == 'Finished' or task_result.json.status == 'Error'
+  failed_when: task_result.json.status == 'Error'
+  retries: 10
+  delay: 20
+      
+- name: "Task Result: Waiting for CloudForms to refresh VMWare Provider"  
+  debug: var=task_result
+

@@ -1,0 +1,55 @@
+---
+# tasks file for ansible-role-cloudforms-register-virtual-machine
+
+- name: "Getting Virtual Machine Uri from CloudForms"
+  uri:
+    url: "https://{{ rhcf_host }}/api/vms?expand=resources&attributes=name&filter[]=name='{{ vm_name }}'"
+    method: GET
+    validate_certs: no
+    headers:
+      X-Auth-Token: "{{ rhcf_auth_token }}"
+      Content-Type: "application/json"
+    body_format: json
+    return_content: yes
+  register: cf_vm_info
+
+- name: "Setting Virtual Machine Uri"
+  set_fact:
+    cf_vm_uri: "{{ cf_vm_info.json.resources[0].href }}"
+
+- name: "Virtual Machine Uri"
+  debug: var=cf_vm_uri
+
+- name: "Setting CloudForms Service URL"
+  set_fact:
+    cf_svc_url: "https://{{ rhcf_host }}/api/services/{{ service_id }}"
+
+- name: "CloudForms Service Uri"
+  debug: var=cf_svc_url
+
+- name: "Create VM Array"
+  set_fact:
+    vms: "{{ vms|default([]) + [ { 'href': cf_svc_url, 'resource':  { 'href': item } } ] }}"
+  with_items:
+    - "{{ cf_vm_uri }}"
+
+- name: "Create VM Array"
+  debug: var=vms
+
+- name: "Register Virtual Machine with the service"
+  uri:
+    url: "https://{{ rhcf_host }}/api/services"
+    method: POST
+    body_format: json
+    body:
+      action: add_resource
+      resources : "{{ vms }}"
+    validate_certs: False
+    headers:
+      X-Auth-Token: "{{ rhcf_auth_token }}"
+      Content-Type: "application/json"
+    status_code: 200
+  register: vm_register
+
+- name: "Virtual Machine(s) registered with the service"
+  debug: var=vm_register.json.results[0].success

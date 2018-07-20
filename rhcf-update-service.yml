@@ -1,0 +1,8 @@
+- name: Red Hat CloudForms | Update Service Name
+  hosts: all
+  gather_facts: false
+  connection: local
+  
+  roles:
+    - ansible-role-cloudforms-authentication
+    - ansible-role-cloudforms-update-service-name

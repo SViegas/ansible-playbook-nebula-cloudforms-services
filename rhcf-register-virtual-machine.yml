@@ -1,0 +1,9 @@
+- name: Red Hat CloudForms | Register Virtual Machine
+  hosts: all
+  gather_facts: false
+  connection: local
+  
+  roles:
+    - ansible-role-cloudforms-authentication
+    - ansible-role-cloudforms-register-virtual-machine
+

@@ -1,0 +1,8 @@
+- name: Red Hat CloudForms | Refresh Providers
+  hosts: all
+  gather_facts: false
+  connection: local
+  
+  roles:
+    - ansible-role-cloudforms-authentication
+    - ansible-role-cloudforms-refresh-providers

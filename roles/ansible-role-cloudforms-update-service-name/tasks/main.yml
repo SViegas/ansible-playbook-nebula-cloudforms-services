@@ -1,0 +1,21 @@
+---
+# tasks file for ansible-role-cloudforms-update-service-name
+
+- name: "Updating CloudForms Service Name"
+  uri:
+    url: "https://{{ rhcf_host }}/api/services/{{ service_id }}"
+    method: POST
+    body_format: json
+    body:
+      action: edit
+      resource:
+        name: "{{ service_name }}"
+    validate_certs: False
+    headers:
+      X-Auth-Token: "{{ rhcf_auth_token }}"
+      Content-Type: "application/json"
+    status_code: 200
+  register: rhcf_service_update
+
+- name: "Task Result: Update Service Name"
+  debug: var=rhcf_service_update
