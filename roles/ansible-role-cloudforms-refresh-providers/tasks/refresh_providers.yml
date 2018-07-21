@@ -18,13 +18,9 @@
 - name: "Task Result: Refreshing VMWare Provider in CloudForms"
   debug: var=provider_refresh
 
-- name: "blah"
-  debug: 
-    msg: "{{ provider_refresh.json }}"
-
 - name: "Setting task refresh URL"
   set_fact:
-    task_url: "{{ provider_refresh.json.href }}"
+    task_url: "{{ provider_refresh.json.task_href }}"
 
 - name: "Fact Result: Task Refresh URL"
   debug: var=task_url
