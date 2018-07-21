@@ -20,11 +20,11 @@
 
 - name: "blah"
   debug: 
-    msg: "{{ provider_refresh.json }}"
+    msg: "{{ provider_refresh.json.msg.href }}"
 
 - name: "Setting task refresh URL"
   set_fact:
-    task_url: "{{ provider_refresh.json.task_href }}"
+    task_url: "{{ provider_refresh.json.msg.href }}"
 
 - name: "Fact Result: Task Refresh URL"
   debug: var=task_url
