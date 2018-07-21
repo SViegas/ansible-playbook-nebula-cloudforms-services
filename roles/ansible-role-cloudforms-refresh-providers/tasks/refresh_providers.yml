@@ -19,7 +19,8 @@
   debug: var=provider_refresh
 
 - name: "blah"
-  debug: "{{ provider_refresh.json }}"
+  debug: 
+    msg: "{{ provider_refresh.json }}"
 
 - name: "Setting task refresh URL"
   set_fact:
